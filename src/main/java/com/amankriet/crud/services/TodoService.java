@@ -37,7 +37,7 @@ public class TodoService {
     }
 
     public void deleteTodo(String id) {
-        if (todoRepository.existsById(id)) {
+        if (!todoRepository.existsById(id)) {
             throw new ResourceNotFoundException("Resource not found with id: " + id);
         }
         todoRepository.deleteById(id);
