@@ -1,130 +1,70 @@
-# CRUD Todo Application
+# Spring Boot Todo API
 
-A simple Todo application built with Spring Boot using Java 23 and MongoDB. This project demonstrates basic CRUD operations through a RESTful API while integrating with MongoDB as the data store.
+A simple RESTful API for managing Todo items built with Spring Boot and MongoDB. This project demonstrates CRUD operations using Spring Data MongoDB with integration to MongoDB Atlas, along with a secure and flexible configuration approach that externalizes sensitive data.
 
 ## Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
 - [Technologies Used](#technologies-used)
+- [File Structure](#file-structure)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Configuration](#configuration)
-- [Project Structure](#project-structure)
-- [Running the Application](#running-the-application)
+   - [MongoDB Connection & Secrets](#mongodb-connection--secrets)
+   - [Global CORS Configuration](#global-cors-configuration)
 - [API Endpoints](#api-endpoints)
+- [Running the Application](#running-the-application)
 - [Future Improvements](#future-improvements)
 - [License](#license)
 
 ## Overview
 
-This project implements a simple Todo application that allows you to create, retrieve, update, and delete Todo items using a RESTful interface. It leverages Spring Boot with Spring Data MongoDB for data access and uses a cloud-hosted MongoDB instance.
+This Spring Boot Todo API provides endpoints for creating, reading, updating, and deleting Todo items stored in a MongoDB database. It is designed with a clean architecture, separating concerns for better maintainability. The application integrates with MongoDB Atlas and includes global CORS configuration to support frontend applications (e.g., React apps running on `http://localhost:3000`).
 
 ## Features
 
-- **CRUD Operations:** Create, Read, Update, and Delete Todo items.
-- **RESTful API:** Simple endpoints to manage Todo items.
-- **MongoDB Integration:** Uses MongoDB Atlas for data persistence.
-- **Modern Java:** Built with Java 23 and Spring Boot.
+- **CRUD Operations:**  
+  Create, retrieve, update, and delete Todo items.
+- **MongoDB Integration:**  
+  Utilizes Spring Data MongoDB for persistence with a MongoDB Atlas cluster.
+- **Secure Configuration:**  
+  Sensitive properties (like your MongoDB URI) are externalized in a separate `application-secret.properties` file.
+- **Global CORS Configuration:**  
+  Enables cross-origin requests from designated origins.
+- **Exception Handling:**  
+  Custom exceptions and global exception handlers return meaningful HTTP responses.
 
 ## Technologies Used
 
 - **Java 23**
-- **Spring Boot 3.4.3**
+- **Spring Boot (3.x)**
 - **Spring Data MongoDB**
-- **Gradle Build Tool**
 - **MongoDB Atlas**
+- **Gradle** (or Maven)
 
-## Prerequisites
-
-- **Java 23 JDK** – Ensure that Java 23 is installed on your system.
-- **Gradle** – The project uses Gradle; ensure you have it installed or use the Gradle wrapper.
-- **MongoDB Atlas Account** – For hosting your MongoDB database (or you can modify the connection URI for a local instance).
-
-## Installation
-
-1. **Clone the Repository:**
-
-   ```bash
-   git clone https://github.com/yourusername/crud-todo-app.git
-   cd crud-todo-app
-   ```
-
-2. **Build the Project:**
-
-   If using the Gradle wrapper, run:
-
-   ```bash
-   ./gradlew clean build
-   ```
-
-## Configuration
-
-### application.properties
-
-Make sure to update your `src/main/resources/application.properties` with your MongoDB credentials:
-
-```properties
-spring.application.name=crud
-spring.application.mongodburi=mongodb+srv://amankriet:<db_password>@crud.mp7t2.mongodb.net/
-spring.application.dbname=todos
-```
-
-Replace `<db_password>` with your actual MongoDB Atlas password.
-
-### build.gradle
-
-Your `build.gradle` is configured to use Java 23 and includes the required dependencies:
-
-```groovy
-plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.4.3'
-	id 'io.spring.dependency-management' version '1.1.7'
-}
-
-group = 'com.amankriet'
-version = '0.0.1-SNAPSHOT'
-
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(23)
-	}
-}
-
-repositories {
-	mavenCentral()
-}
-
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
-}
-```
-
-## Project Structure
-
-The file structure is organized as follows:
+## File Structure
 
 ```
-crud-todo-app/
-├── build.gradle
+spring-boot-todo-api/
 ├── src/
 │   ├── main/
 │   │   ├── java/
 │   │   │   └── com/
 │   │   │       └── amankriet/
 │   │   │           └── crud/
-│   │   │               ├── controllers/        // REST controllers
-│   │   │               ├── models/             // Domain models (e.g., Todo.java)
-│   │   │               ├── repositories/       // MongoDB repositories
-│   │   │               ├── services/           // Business logic and services
+│   │   │               ├── config/
+│   │   │               │   └── CorsConfig.java        // Global CORS configuration
+│   │   │               ├── controllers/
+│   │   │               │   └── TodoController.java
+│   │   │               ├── exception/
+│   │   │               │   └── ResourceNotFoundException.java
+│   │   │               ├── models/
+│   │   │               │   └── Todo.java
+│   │   │               ├── repositories/
+│   │   │               │   └── TodoRepository.java
+│   │   │               ├── services/
+│   │   │               │   └── TodoService.java
 │   │   │               └── CrudApplication.java
 │   │   └── resources/
 │   │       └── application.properties
@@ -134,37 +74,168 @@ crud-todo-app/
 │               └── amankriet/
 │                   └── crud/
 │                       └── CrudApplicationTests.java
+├── application-secret.properties    // Contains sensitive properties (not committed to version control)
+├── build.gradle (or pom.xml)
 └── README.md
 ```
 
-## Running the Application
+## Prerequisites
 
-To start the application, run:
+- **Java 23 JDK**
+- **MongoDB Atlas Account:**  
+  Set up your cluster and ensure your IP is whitelisted.
+- **Gradle or Maven:**  
+  Use your preferred build tool.
+- **IDE or Text Editor**
 
-```bash
-./gradlew bootRun
+## Installation
+
+1. **Clone the Repository:**
+
+   ```bash
+   git clone https://github.com/yourusername/spring-boot-todo-api.git
+   cd spring-boot-todo-api
+   ```
+
+2. **Build the Project:**
+
+   - **Gradle:**
+
+     ```bash
+     ./gradlew clean build
+     ```
+
+   - **Maven:**
+
+     ```bash
+     mvn clean install
+     ```
+
+## Configuration
+
+### MongoDB Connection & Secrets
+
+Your main configuration file (`src/main/resources/application.properties`) imports sensitive properties from an external file located in the project root. This keeps your sensitive data (like the MongoDB URI) out of the source control.
+
+**application.properties:**
+
+```properties
+spring.application.name=crud
+# Import the secret properties file (optional so the app still runs if file is missing)
+spring.config.import=optional:file:./application-secret.properties
+# Use the value from the secret file
+spring.data.mongodb.uri=${mongodb.uri}
+spring.application.dbname=todos
 ```
 
-The application will start on [http://localhost:8080](http://localhost:8080).
+**application-secret.properties:**
+
+Place this file in the project root (at the same level as your build file) and add it to your `.gitignore`:
+
+```properties
+mongodb.uri=mongodb+srv://amankriet:<db_password>@crud.mp7t2.mongodb.net/<dbname>?retryWrites=true&w=majority
+```
+
+Replace `<db_password>` and `<dbname>` with your actual MongoDB Atlas password and database name.
+
+### Global CORS Configuration
+
+To allow cross-origin requests (e.g., from `http://localhost:3000`), a global CORS configuration is implemented in `CorsConfig.java`:
+
+```java
+// src/main/java/com/amankriet/crud/config/CorsConfig.java
+
+package com.amankriet.crud.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class CorsConfig {
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+         return new WebMvcConfigurer() {
+             @Override
+             public void addCorsMappings(CorsRegistry registry) {
+                 registry.addMapping("/**")
+                         .allowedOrigins("http://localhost:3000")
+                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                         .allowedHeaders("*");
+             }
+         };
+    }
+}
+```
+
+This ensures that every endpoint in your application will accept requests from your frontend running at `http://localhost:3000`.
 
 ## API Endpoints
 
-Here are some example endpoints for the Todo application:
+- **GET /todos**  
+  Retrieves all Todo items.
 
-- **GET /todos** – Retrieve all Todo items.
-- **POST /todos** – Create a new Todo item.
-- **GET /todos/{id}** – Retrieve a Todo item by its ID.
-- **PUT /todos/{id}** – Update an existing Todo item.
-- **DELETE /todos/{id}** – Delete a Todo item.
+- **GET /todos/{id}**  
+  Retrieves a specific Todo item by its ID.  
+  _Returns 404 Not Found if the Todo does not exist._
 
-You can test these endpoints using tools like [Postman](https://www.postman.com/) or `curl`.
+- **POST /todos**  
+  Creates a new Todo item.  
+  _Example Request Body:_
+  ```json
+  {
+    "task": "Buy groceries",
+    "completed": false
+  }
+  ```
+
+- **PUT /todos/{id}**  
+  Updates an existing Todo item.  
+  _Example Request Body:_
+  ```json
+  {
+    "task": "Buy groceries and cook dinner",
+    "completed": true
+  }
+  ```
+
+- **DELETE /todos/{id}**  
+  Deletes a Todo item by its ID.
+
+## Running the Application
+
+You can run the application in several ways:
+
+- **Using Gradle:**
+
+  ```bash
+  ./gradlew bootRun
+  ```
+
+- **Using Maven:**
+
+  ```bash
+  mvn spring-boot:run
+  ```
+
+- **Using your IDE:**  
+  Run the `main` method in `CrudApplication.java`.
+
+Once running, the API will be available at `http://localhost:8080/todos`.
 
 ## Future Improvements
 
-- **Authentication & Authorization:** Secure the API endpoints.
-- **External Database:** Switch from MongoDB Atlas to a locally managed or alternative external database.
-- **Enhanced Error Handling:** Add comprehensive error handling and validation.
-- **Frontend Integration:** Build a simple user interface with frameworks like React or Angular.
+- **Enhanced Error Handling:**  
+  Implement a global exception handler using `@ControllerAdvice` for centralized error responses.
+- **Security:**  
+  Integrate Spring Security for authentication and authorization.
+- **Testing:**  
+  Add comprehensive unit and integration tests.
+- **API Documentation:**  
+  Use Swagger/OpenAPI for automatic API documentation.
+- **Deployment:**  
+  Prepare for cloud deployment and configure additional profiles.
 
 ## License
 
