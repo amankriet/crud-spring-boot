@@ -43,7 +43,7 @@ public class TodoController {
     // Update an existing todo
     @PutMapping("/{id}")
     public ResponseEntity<Todo> updateTodo(@PathVariable String id, @Valid @RequestBody Todo todoDetails) {
-        Todo updatedTodo = todoService.updateTodo(id, todoDetails);
+        Todo updatedTodo = todoService.updateTodo(todoDetails);
         return ResponseEntity.ok(updatedTodo);
     }
 
