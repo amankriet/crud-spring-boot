@@ -1,0 +1,22 @@
+# Ignore Maven and Gradle directories
+.mvn/
+.gradle/
+build/
+
+# Ignore IntelliJ IDEA project files
+.idea/
+*.iml
+
+# Ignore other common files
+target/
+out/
+*.log
+*.tmp
+*.swp
+.DS_Store
+node_modules/
+
+# Ignore environment-specific application properties
+application-secret.properties
+src/main/resources/application-dev.properties
+src/main/resources/application-prod.properties
