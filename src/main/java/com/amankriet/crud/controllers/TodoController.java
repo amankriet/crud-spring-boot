@@ -2,6 +2,7 @@ package com.amankriet.crud.controllers;
 
 import com.amankriet.crud.models.Todo;
 import com.amankriet.crud.services.TodoService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/todos")
+@RequestMapping("/api/todos")
 public class TodoController {
 
     private final TodoService todoService;
@@ -20,6 +21,7 @@ public class TodoController {
     }
 
     // Retrieve all todos
+    @Operation(summary = "Get all todos")
     @GetMapping
     public ResponseEntity<List<Todo>> getAllTodos() {
         List<Todo> todos = todoService.getAllTodos();
@@ -27,6 +29,7 @@ public class TodoController {
     }
 
     // Retrieve a specific todo by id
+    @Operation(summary = "Get a todo by id")
     @GetMapping("/{id}")
     public ResponseEntity<Todo> getTodoById(@PathVariable String id) {
         Todo todo = todoService.getTodoById(id);
@@ -34,6 +37,7 @@ public class TodoController {
     }
 
     // Create a new todo
+    @Operation(summary = "Create a new todo")
     @PostMapping
     public ResponseEntity<Todo> createTodo(@Valid @RequestBody Todo todo) {
         Todo createdTodo = todoService.createTodo(todo);
@@ -41,6 +45,7 @@ public class TodoController {
     }
 
     // Update an existing todo
+    @Operation(summary = "Update an existing todo")
     @PutMapping("/{id}")
     public ResponseEntity<Todo> updateTodo(@PathVariable String id, @Valid @RequestBody Todo todoDetails) {
         Todo updatedTodo = todoService.updateTodo(todoDetails);
@@ -48,6 +53,7 @@ public class TodoController {
     }
 
     // Delete a todo by id
+    @Operation(summary = "Delete a todo by id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTodo(@PathVariable String id) {
         todoService.deleteTodo(id);
