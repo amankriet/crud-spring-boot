@@ -4,15 +4,21 @@ import com.amankriet.crud.models.Todo;
 import com.amankriet.crud.services.TodoService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/todos")
 public class TodoController {
+
+    private static final Logger logger = LoggerFactory.getLogger(TodoController.class);
 
     private final TodoService todoService;
 
@@ -41,7 +47,16 @@ public class TodoController {
     @PostMapping
     public ResponseEntity<Todo> createTodo(@Valid @RequestBody Todo todo) {
         Todo createdTodo = todoService.createTodo(todo);
-        return ResponseEntity.ok(createdTodo);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(createdTodo.getId())
+                .toUri();
+
+        logger.debug("Created Todo: {}", createdTodo);
+        logger.debug("Todo URI: {}", location);
+
+        return ResponseEntity.created(location).body(createdTodo);
     }
 
     // Update an existing todo

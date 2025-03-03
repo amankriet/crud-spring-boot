@@ -29,5 +29,12 @@ dependencies {
 }
 
 tasks.named('test') {
+	// Locate the Byte Buddy Agent jar in the test runtime classpath
+	def agentJar = configurations.testRuntimeClasspath.find { it.name.contains("byte-buddy-agent") }
+	if (agentJar != null) {
+		jvmArgs "-javaagent:${agentJar.absolutePath}"
+	} else {
+		logger.warn("Byte Buddy Agent not found on test runtime classpath")
+	}
 	useJUnitPlatform()
 }
